@@ -119,11 +119,11 @@ RELEASE_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-lin
 CHECKSUM_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-linux-${ARCH}.tar.gz.sha256"
 
 echo -e "Downloading official release package..."
-curl -sSL -o hypriv.tar.gz "$RELEASE_URL"
-curl -sSL -o hypriv.tar.gz.sha256 "$CHECKSUM_URL"
-sha256sum -c hypriv.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
-tar -xzf hypriv.tar.gz -C "$APP_DIR"
-rm -f hypriv.tar.gz hypriv.tar.gz.sha256
+curl -sSL -O "$RELEASE_URL"
+curl -sSL -O "$CHECKSUM_URL"
+sha256sum -c hypriv-linux-${ARCH}.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
+tar -xzf hypriv-linux-${ARCH}.tar.gz -C "$APP_DIR"
+rm -f hypriv-linux-${ARCH}.tar.gz hypriv-linux-${ARCH}.tar.gz.sha256
 
 # 3. Node Runtime Check
 NODE_DIR="$APP_DIR/.node"
