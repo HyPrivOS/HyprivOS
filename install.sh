@@ -85,6 +85,7 @@ fi
 echo -e "✔ Ubuntu"
 
 # 2. Dependencies
+
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 
@@ -142,9 +143,25 @@ fi
 echo -e "✔ Node Runtime"
 
 # 4. PM2
-sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && npm install >/dev/null 2>&1"
-sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && npm install pm2 >/dev/null 2>&1"
-echo -e "✔ PM2"
+show_loader() {
+    local pid=$1
+    local msg=$2
+    local delay=0.1
+    local spinstr='|/-\'
+    while kill -0 $pid 2>/dev/null; do
+        local temp=${spinstr#?}
+        printf "\r\e[1;36m[%c]\e[0m %s..." "$spinstr" "$msg"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+    done
+    printf "\r\e[1;32m✔\e[0m %s Complete!                                  \n" "$msg"
+}
+
+sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && npm install >/dev/null 2>&1" &
+show_loader $! "Installing NPM Packages (Please wait)"
+
+sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && npm install pm2 >/dev/null 2>&1" &
+show_loader $! "Installing PM2 Process Manager"
 
 echo -e "✔ Installing"
 
@@ -152,13 +169,13 @@ echo -e "✔ Installing"
 sudo -u hypriv mkdir -p "$APP_DIR/data" "$APP_DIR/logs" "$APP_DIR/backups" "$APP_DIR/uploads"
 
 # Auth and Env Config
-read -p "Application Port [Default: 3456]: " APP_PORT
+read -p "Application Port [Default: 3456]: " APP_PORT </dev/tty
 APP_PORT=${APP_PORT:-3456}
 
-read -p "Administrator Username [Default: admin]: " ADMIN_USER
+read -p "Administrator Username [Default: admin]: " ADMIN_USER </dev/tty
 ADMIN_USER=${ADMIN_USER:-admin}
 
-read -s -p "Administrator Password (leave blank to generate random): " ADMIN_PASS
+read -s -p "Administrator Password (leave blank to generate random): " ADMIN_PASS </dev/tty
 echo ""
 if [ -z "$ADMIN_PASS" ]; then
   ADMIN_PASS=$(openssl rand -base64 12)
