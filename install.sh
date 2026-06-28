@@ -53,14 +53,14 @@ EOF
 run_with_spinner() {
   local msg="$1"
   shift
-  echo -n -e "$msg..."
+  echo -n -e "\e[1;34m$msg...\e[0m"
   "$@" > /dev/null 2>&1 &
   local pid=$!
   local delay=0.1
   local spinstr='|/-\'
   while kill -0 $pid 2>/dev/null; do
     local temp=${spinstr#?}
-    printf " [%c] " "$spinstr"
+    printf "\e[1;34m [%c] \e[0m" "$spinstr"
     local spinstr=$temp${spinstr%"$temp"}
     sleep $delay
     printf "\b\b\b\b\b"
@@ -68,9 +68,9 @@ run_with_spinner() {
   wait $pid
   local status=$?
   if [ $status -eq 0 ]; then
-    echo -e "\r✔ $msg... Done!   "
+    echo -e "\r\e[1;34m✔ $msg... Done!   \e[0m"
   else
-    echo -e "\r✖ $msg... Failed! "
+    echo -e "\r\e[1;31m✖ $msg... Failed! \e[0m"
     exit $status
   fi
 }
@@ -142,8 +142,10 @@ cd "$APP_DIR"
 RELEASE_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-linux-${ARCH}.tar.gz"
 CHECKSUM_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-linux-${ARCH}.tar.gz.sha256"
 
-echo -e "Downloading official release package..."
+echo -e "\e[1;34mDownloading official release package...\e[0m"
+echo -ne "\e[1;34m"
 wget -q --show-progress "$RELEASE_URL"
+echo -ne "\e[0m"
 wget -q "$CHECKSUM_URL"
 sha256sum -c hypriv-linux-${ARCH}.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
 run_with_spinner "Extracting package" tar -xzf hypriv-linux-${ARCH}.tar.gz -C "$APP_DIR"
@@ -261,6 +263,8 @@ echo -e "Dashboard:"
 echo -e "http://$IP_ADDR:$APP_PORT\n"
 echo -e "Username:"
 echo -e "$ADMIN_USER\n"
+echo -e "Password:"
+echo -e "$ADMIN_PASS\n"
 echo -e "Management:\n"
 echo -e "systemctl restart hypriv-os\n"
 echo -e "systemctl status hypriv-os\n"
