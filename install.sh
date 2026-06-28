@@ -211,12 +211,12 @@ Description=HyPriv OS Daemon
 After=network.target
 
 [Service]
-Type=forking
+Type=simple
 User=hypriv
+Environment=NODE_ENV=production
 Environment=PATH=$NODE_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 WorkingDirectory=$APP_DIR
-ExecStart=$APP_DIR/node_modules/.bin/pm2 start app.js --name "HyPriv-OS"
-ExecStop=$APP_DIR/node_modules/.bin/pm2 stop "HyPriv-OS"
+ExecStart=$NODE_DIR/bin/node $APP_DIR/app.js
 Restart=always
 StandardOutput=append:$APP_DIR/logs/server.log
 StandardError=append:$APP_DIR/logs/server.log
@@ -228,7 +228,6 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable hypriv-os.service >/dev/null 2>&1
 sudo systemctl start hypriv-os.service
-sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && ./node_modules/.bin/pm2 save >/dev/null 2>&1"
 
 echo -e "✔ Starting HyPriv OS\n"
 
