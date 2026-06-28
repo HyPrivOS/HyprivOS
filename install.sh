@@ -99,24 +99,15 @@ sudo chown -R hypriv:hypriv "$APP_DIR"
 cd "$APP_DIR"
 
 # Download Release and Checksum
-RELEASE_URL="https://download.hypriv.com/releases/latest/hypriv-linux-${ARCH}.tar.gz"
-CHECKSUM_URL="https://download.hypriv.com/releases/latest/hypriv-linux-${ARCH}.tar.gz.sha256"
+RELEASE_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-linux-${ARCH}.tar.gz"
+CHECKSUM_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-linux-${ARCH}.tar.gz.sha256"
 
-# echo -e "Downloading official release package..."
-# curl -sSL -o hypriv.tar.gz "$RELEASE_URL"
-# curl -sSL -o hypriv.tar.gz.sha256 "$CHECKSUM_URL"
-# sha256sum -c hypriv.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
-# tar -xzf hypriv.tar.gz -C "$APP_DIR"
-# rm -f hypriv.tar.gz hypriv.tar.gz.sha256
-
-# Note: Since the official package isn't available right now for local dev testing, 
-# I am skipping the actual curl for this script execution to not fail abruptly.
-# To test locally, the repo files should already be in APP_DIR. 
-# We copy them just for this transition phase from the CWD if run locally.
-if [ -d "/home/ayesha/Projects/ngnix-Server" ]; then
-  sudo cp -r /home/ayesha/Projects/ngnix-Server/* "$APP_DIR/"
-  sudo chown -R hypriv:hypriv "$APP_DIR"
-fi
+echo -e "Downloading official release package..."
+curl -sSL -o hypriv.tar.gz "$RELEASE_URL"
+curl -sSL -o hypriv.tar.gz.sha256 "$CHECKSUM_URL"
+sha256sum -c hypriv.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
+tar -xzf hypriv.tar.gz -C "$APP_DIR"
+rm -f hypriv.tar.gz hypriv.tar.gz.sha256
 
 # 3. Node Runtime Check
 NODE_DIR="$APP_DIR/.node"
@@ -145,8 +136,8 @@ echo -e "✔ Installing"
 sudo -u hypriv mkdir -p "$APP_DIR/data" "$APP_DIR/logs" "$APP_DIR/backups" "$APP_DIR/uploads"
 
 # Auth and Env Config
-read -p "Application Port [Default: 3654]: " APP_PORT
-APP_PORT=${APP_PORT:-3654}
+read -p "Application Port [Default: 3456]: " APP_PORT
+APP_PORT=${APP_PORT:-3456}
 
 read -p "Administrator Username [Default: admin]: " ADMIN_USER
 ADMIN_USER=${ADMIN_USER:-admin}
