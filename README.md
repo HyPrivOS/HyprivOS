@@ -34,9 +34,9 @@ Before installing, ensure your server meets the following criteria:
 
 Installing HyPriv OS is incredibly simple. Just connect to your server via SSH and run the following command:
 
-```bash
-curl -sL https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/install.sh | sudo bash
-```
+> ```bash
+> curl -sL https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/install.sh | sudo bash
+> ```
 
 **During Installation:**
 1. The script will automatically verify your system architecture.
@@ -50,9 +50,9 @@ curl -sL https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/install.sh | s
 
 After a successful installation, you can access your web dashboard by navigating to your server's IP address and the port you configured (Default is `3456`).
 
-```text
-http://<YOUR-SERVER-IP>:3456
-```
+> ```text
+> http://<YOUR-SERVER-IP>:3456
+> ```
 Login with the Admin Username and Password you set during the installation.
 
 ---
@@ -66,29 +66,29 @@ HyPriv OS is designed to be lightweight and robust. It runs as a **Native System
 Here are the standard commands you can use to manage the platform:
 
 **Check Status:**
-```bash
-sudo systemctl status hypriv-os
-```
+> ```bash
+> sudo systemctl status hypriv-os
+> ```
 
 **Restart the Platform:**
-```bash
-sudo systemctl restart hypriv-os
-```
+> ```bash
+> sudo systemctl restart hypriv-os
+> ```
 
 **Stop the Platform:**
-```bash
-sudo systemctl stop hypriv-os
-```
+> ```bash
+> sudo systemctl stop hypriv-os
+> ```
 
 **View Live Server Logs:**
-```bash
-sudo journalctl -u hypriv-os -f
-```
+> ```bash
+> sudo journalctl -u hypriv-os -f
+> ```
 
 **Reset Admin Password (via CLI):**
-```bash
-sudo hypriv reset-password
-```
+> ```bash
+> sudo hypriv reset-password
+> ```
 
 ---
 
@@ -96,4 +96,15 @@ sudo hypriv reset-password
 
 If you encounter any issues or have feature requests, please feel free to open an issue in this repository. 
 
+---
+
+## ☕ Buy Me A Coffee
+
+If you find HyPriv OS helpful and want to support its development, consider buying me a coffee! 
+
+**UPI ID:** `warriorabhiii@axisb`
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=warriorabhiii@axisb%26pn=HyPriv%20OS" alt="UPI QR Code" width="150" />
+
+<br/>
 <p align="center">Built with ❤️ for Linux Administrators.</p>
