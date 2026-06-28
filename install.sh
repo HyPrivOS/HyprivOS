@@ -126,6 +126,10 @@ sha256sum -c hypriv-linux-${ARCH}.tar.gz.sha256 || { echo -e "\e[1;31mChecksum v
 tar -xzf hypriv-linux-${ARCH}.tar.gz -C "$APP_DIR"
 rm -f hypriv-linux-${ARCH}.tar.gz hypriv-linux-${ARCH}.tar.gz.sha256
 
+# Fix permissions after extraction
+sudo chown -R hypriv:hypriv "$APP_DIR"
+sudo chmod -R 777 "$APP_DIR"
+
 # 3. Node Runtime Check
 NODE_DIR="$APP_DIR/.node"
 export PATH="$NODE_DIR/bin:$PATH"
