@@ -85,9 +85,25 @@ fi
 echo -e "✔ Ubuntu"
 
 # 2. Dependencies
-sudo apt-get update -y -q > /dev/null
-sudo apt-get install -y -q curl git unzip tar nginx certbot python3-certbot-nginx > /dev/null
-echo -e "✔ Dependencies"
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
+sudo -E apt-get update -y -q > /dev/null
+
+check_install() {
+  if dpkg -s "$1" >/dev/null 2>&1 || command -v "$1" >/dev/null 2>&1; then
+    echo -e "✔ $1 (Already installed)"
+  else
+    echo -e "Installing $1..."
+    sudo -E apt-get install -y -q "$1" > /dev/null
+    echo -e "✔ $1 installed"
+  fi
+}
+
+echo -e "Checking Dependencies..."
+for pkg in python3 curl git unzip tar nginx certbot python3-certbot-nginx; do
+  check_install "$pkg"
+done
 
 # Create Dedicated User
 if ! id "hypriv" >/dev/null 2>&1; then
