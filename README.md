@@ -1,4 +1,5 @@
 <p align="center">
+  <img src="https://hypriv.com/logo.png" alt="HyPriv OS Logo" width="120" />
   <h1 align="center">HyPriv OS</h1>
   <p align="center">
     <strong>Universal Linux Server Management Platform</strong>
@@ -56,9 +57,13 @@ Login with the Admin Username and Password you set during the installation.
 
 ---
 
-## 🔧 Management Commands
+## 🔧 Native System Management (No PM2 Required)
 
-HyPriv OS runs safely as a background systemd service (`hypriv-os`). Here are some helpful commands for managing your server:
+HyPriv OS is designed to be lightweight and robust. It runs as a **Native SystemD Service** (`hypriv-os.service`), meaning it integrates perfectly with your OS without relying on external process managers like PM2. 
+
+**Auto-Start on Boot:** The service is automatically enabled during installation. If your server restarts, HyPriv OS will instantly turn back on by itself.
+
+Here are the standard commands you can use to manage the platform:
 
 **Check Status:**
 ```bash
@@ -68,6 +73,11 @@ sudo systemctl status hypriv-os
 **Restart the Platform:**
 ```bash
 sudo systemctl restart hypriv-os
+```
+
+**Stop the Platform:**
+```bash
+sudo systemctl stop hypriv-os
 ```
 
 **View Live Server Logs:**
