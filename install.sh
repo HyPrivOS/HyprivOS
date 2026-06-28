@@ -102,7 +102,7 @@ check_install() {
 }
 
 echo -e "Checking Dependencies..."
-for pkg in python3 curl git unzip tar nginx certbot python3-certbot-nginx; do
+for pkg in python3 curl wget git unzip tar nginx certbot python3-certbot-nginx; do
   check_install "$pkg"
 done
 
@@ -120,8 +120,8 @@ RELEASE_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-lin
 CHECKSUM_URL="https://raw.githubusercontent.com/HyPrivOS/HyprivOS/main/hypriv-linux-${ARCH}.tar.gz.sha256"
 
 echo -e "Downloading official release package..."
-curl -sSL -O "$RELEASE_URL"
-curl -sSL -O "$CHECKSUM_URL"
+wget -q --show-progress "$RELEASE_URL"
+wget -q "$CHECKSUM_URL"
 sha256sum -c hypriv-linux-${ARCH}.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
 tar -xzf hypriv-linux-${ARCH}.tar.gz -C "$APP_DIR"
 rm -f hypriv-linux-${ARCH}.tar.gz hypriv-linux-${ARCH}.tar.gz.sha256
@@ -142,26 +142,7 @@ if ! command -v node >/dev/null 2>&1 || [ "$(node -v | cut -d'.' -f1)" != "v20" 
 fi
 echo -e "✔ Node Runtime"
 
-# 4. PM2
-show_loader() {
-    local pid=$1
-    local msg=$2
-    local delay=0.1
-    local spinstr='|/-\'
-    while kill -0 $pid 2>/dev/null; do
-        local temp=${spinstr#?}
-        printf "\r\e[1;36m[%c]\e[0m %s..." "$spinstr" "$msg"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-    done
-    printf "\r\e[1;32m✔\e[0m %s Complete!                                  \n" "$msg"
-}
-
-sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && npm install >/dev/null 2>&1" &
-show_loader $! "Installing NPM Packages (Please wait)"
-
-sudo -u hypriv bash -c "export PATH=$NODE_DIR/bin:\$PATH && cd $APP_DIR && npm install pm2 >/dev/null 2>&1" &
-show_loader $! "Installing PM2 Process Manager"
+echo -e "✔ Extracted Build Data"
 
 echo -e "✔ Installing"
 
