@@ -50,6 +50,31 @@ cat << "EOF"
                                           %                                       
 EOF
 
+run_with_spinner() {
+  local msg="$1"
+  shift
+  echo -n -e "$msg..."
+  "$@" > /dev/null 2>&1 &
+  local pid=$!
+  local delay=0.1
+  local spinstr='|/-\'
+  while kill -0 $pid 2>/dev/null; do
+    local temp=${spinstr#?}
+    printf " [%c] " "$spinstr"
+    local spinstr=$temp${spinstr%"$temp"}
+    sleep $delay
+    printf "\b\b\b\b\b"
+  done
+  wait $pid
+  local status=$?
+  if [ $status -eq 0 ]; then
+    echo -e "\r✔ $msg... Done!   "
+  else
+    echo -e "\r✖ $msg... Failed! "
+    exit $status
+  fi
+}
+
 APP_DIR="/opt/hypriv-os"
 APP_VERSION="1.0.0"
 
@@ -89,15 +114,13 @@ echo -e "✔ Ubuntu"
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 
-sudo -E apt-get update -y -q > /dev/null
+run_with_spinner "Updating package lists" sudo -E apt-get update -y -q
 
 check_install() {
   if dpkg -s "$1" >/dev/null 2>&1 || command -v "$1" >/dev/null 2>&1; then
     echo -e "✔ $1 (Already installed)"
   else
-    echo -e "Installing $1..."
-    sudo -E apt-get install -y -q "$1" > /dev/null
-    echo -e "✔ $1 installed"
+    run_with_spinner "Installing $1" sudo -E apt-get install -y -q "$1"
   fi
 }
 
@@ -123,7 +146,7 @@ echo -e "Downloading official release package..."
 wget -q --show-progress "$RELEASE_URL"
 wget -q "$CHECKSUM_URL"
 sha256sum -c hypriv-linux-${ARCH}.tar.gz.sha256 || { echo -e "\e[1;31mChecksum verification failed.\e[0m"; exit 1; }
-tar -xzf hypriv-linux-${ARCH}.tar.gz -C "$APP_DIR"
+run_with_spinner "Extracting package" tar -xzf hypriv-linux-${ARCH}.tar.gz -C "$APP_DIR"
 rm -f hypriv-linux-${ARCH}.tar.gz hypriv-linux-${ARCH}.tar.gz.sha256
 
 # Fix permissions after extraction
@@ -141,10 +164,9 @@ if ! command -v node >/dev/null 2>&1 || [ "$(node -v | cut -d'.' -f1)" != "v20" 
   else
     NODE_URL="https://nodejs.org/dist/v20.10.0/node-v20.10.0-linux-arm64.tar.xz"
   fi
-  curl -fsSL "$NODE_URL" | tar -xJ -C "$NODE_DIR" --strip-components=1
+  run_with_spinner "Downloading and installing Node.js" bash -c "curl -fsSL '$NODE_URL' | tar -xJ -C '$NODE_DIR' --strip-components=1"
   sudo chown -R hypriv:hypriv "$NODE_DIR"
 fi
-echo -e "✔ Node Runtime"
 
 echo -e "✔ Extracted Build Data"
 
